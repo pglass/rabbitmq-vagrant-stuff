@@ -4,11 +4,16 @@ import time
 import sys
 
 if len(sys.argv) < 2:
-    print "Usage: %s <host> <port>" % sys.argv[0]
+    print "Usage: %s <host> <port> [message_tag]" % sys.argv[0]
     sys.exit(1)
 
 host = sys.argv[1]
 port = int(sys.argv[2])
+
+if len(sys.argv) >= 3:
+    message = sys.argv[3]
+else:
+    message = "Hello world"
 
 print "Using host %s and port %s" % (host, port)
 
@@ -31,10 +36,11 @@ channel.queue_declare(queue='hello')
 # Here we use the default exchange.
 count = 1
 while True:
+    body = "%s %s" % (message, count)
     channel.basic_publish(exchange='',
                           routing_key='hello',
-                          body='Hello World %s' % count)
-    print "Sent message %s" % count
+                          body=body)
+    print "Sent message %s" % body
     time.sleep(5)
     count += 1
 
